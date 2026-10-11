@@ -1,0 +1,24 @@
+flake := "."
+host := `hostname -s`
+username := `whoami`
+
+# Switch to the current host's config
+switch:
+  home-manager switch --flake {{flake}}#{{username}}@{{host}}
+
+# Preview changes without applying (dry-run/build only)
+build:
+  home-manager build --flake {{flake}}#{{username}}@{{host}}
+
+# Check unread home-manager news
+news:
+  home-manager news --flake {{flake}}#{{username}}@{{host}}
+
+# List generations
+generations:
+  home-manager generations
+
+# Clean
+clean:
+  nix-collect-garbage -d
+
