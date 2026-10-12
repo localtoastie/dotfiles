@@ -1,6 +1,13 @@
 { config, pkgs, ... }:
-
-{
+let
+  shellAliases = {
+    ".." = "cd ..";
+    "..." = "cd ../..";
+    cat = "bat";
+    cd = "z";
+    vi = "vim";
+  };
+in {
   fonts = {
     fontconfig = {
       enable = true;
@@ -60,6 +67,11 @@
   programs = {
     home-manager = {
       enable = true;
+    };
+
+    awscli = {
+      enable = true;
+      settings = import ./aws/config.nix;
     };
 
     bash = {
