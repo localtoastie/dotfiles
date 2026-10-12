@@ -25,6 +25,7 @@
                 then "/Users/${username}"
                 else "/home/${username}";
               home.backupFileExtension = "hm-backup";
+              xdg.enable = true;
             }
           ];
         };

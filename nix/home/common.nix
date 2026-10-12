@@ -117,6 +117,52 @@ in {
       enableCompletion = true;
 
       inherit shellAliases;
+
+      dotDir = "${config.xdg.configHome}/zsh";
+
+      autosuggestion = {
+          enable = true;
+          highlight = "fg=#171438,bg=white,bold,underline";
+          strategy = [ "history" "completion" ];
+      };
+
+      completionInit = "autoload -Uz compinit && compinit && zstyle ':completion:*' menu select";
+
+      syntaxHighlighting = {
+          enable = true;
+          highlighters = [
+              "main"
+              "brackets"
+              "pattern"
+              "cursor"
+              "root"
+              "line"
+          ];
+          patterns = {
+              "rm -rf *" = "fg=white,bold,bg=red";
+          };
+          styles = {
+              comment = "fg=yellow";
+          };
+      };
+
+      history = {
+          expireDuplicatesFirst = true;
+          extended = true;
+          ignoreAllDups = false;
+          ignoreDups = true;
+          ignoreSpace = true;
+          save = 10000;
+          share = true;
+          size = 10000;
+      };
+
+      historySubstringSearch = {
+          enable = true;
+          searchDownKey = [ "^[[B" ];
+          searchUpKey = [ "^[[A" ];
+      };
+
     };
   };
 
