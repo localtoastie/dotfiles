@@ -36,6 +36,7 @@ in {
       ssm-session-manager-plugin
       starship
       strace
+      tldr
       tmux
       tree
       uv
