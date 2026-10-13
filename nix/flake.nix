@@ -25,7 +25,13 @@
                 then "/Users/${username}"
                 else "/home/${username}";
               home.backupFileExtension = "hm-backup";
-              xdg.enable = true;
+              xdg = {
+                enable = true;
+                configFile."zsh/functions" = {
+                  source = ./zsh-functions;
+                  recursive = true;
+                };
+              };
             }
           ];
         };
