@@ -1,4 +1,4 @@
-{ config, pkgs, ... }:
+{ config, pkgs, lib, ... }:
 let
   shellAliases = {
     ".." = "cd ..";
@@ -99,10 +99,56 @@ in {
       enable = true;
     };
 
+    fd = {
+      enable = true;
+      extraOptions = [
+        #"--no-ignore"
+	"--strip-cwd-prefix"
+	"--absolute-path"
+      ];
+      hidden = true;
+      ignores = [
+        ".git/"
+        ".bare/"
+        "*.bak"
+      ];
+    };
+
+    fzf = {
+      enable = true;
+      enableZshIntegration = true;
+      colors = {
+        fg = "#cbe0f0";
+        "fg+" = "#cbe0f0";
+        bg = "#011628";
+        "bg+" = "#143652";
+        hl = "#b388ff";
+        "hl+" = "#b388ff";
+        info = "#06bce4";
+        prompt = "#2cf9ed";
+        pointer = "#2cf9ed";
+        marker = "#2cf9ed";
+        spinner = "#2cf9ed";
+        header = "#2cf9ed";
+      };
+      fileWidget = {
+        command = "fd --hidden --strip-cwd-prefix --exclude .git --exclude .bare";
+        options = [
+          "--preview 'if [ -d {} ]; then eza --tree --color=always {} | head -200; else bat -n --color=always --line-range :500 {}; fi'"
+        ];
+      };
+      changeDirWidget = {
+        command = "fd --type=d --hidden --strip-cwd-prefix --exclude .git";
+        options = [
+          "--preview 'eza --tree --color=always {} | head -200'"
+        ];
+      };
+    };
+
     git = {
       enable = true;
       settings.user = {
-        name = "Victor Louie";
+        name = "victor louie";
         email = "victor@victorlouie.com";
       };
     };
@@ -126,7 +172,7 @@ in {
           strategy = [ "history" "completion" ];
       };
 
-      completionInit = "autoload -Uz compinit && compinit && zstyle ':completion:*' menu select";
+#      completionInit = "autoload -Uz compinit && compinit && zstyle ':completion:*' menu select";
 
       syntaxHighlighting = {
           enable = true;
@@ -162,6 +208,78 @@ in {
           searchDownKey = [ "^[[B" ];
           searchUpKey = [ "^[[A" ];
       };
+
+      initContent = lib.mkMerge [
+        (lib.mkOrder 500 ''
+          # Where to look for autoload function definitions
+          fpath=(
+            ~/.config/zsh/functions
+            "''${fpath[@]}"
+          )
+
+          # Autoload all shell functions from all directories in $fpath (following
+          # symlinks) that have the executable bit on (the executable bit is not
+          # necessary, but gives you an easy way to stop the autoloading of a
+          # particular shell function). $fpath should not be empty for this to work.
+          for func in $^fpath/*(N-.x:t); autoload $func
+        '')
+
+        (lib.mkOrder 1000 ''
+          # Completion styling (was appended to completionInit)
+          zstyle ':completion:*' menu select
+
+          autoload bashcompinit && bashcompinit
+          complete -C aws_completer aws
+
+          # Use fd (https://github.com/sharkdp/fd) for listing path candidates.
+          # - The first argument to the function ($1) is the base path to start traversal
+          _fzf_compgen_path() {
+            fd --hidden --exclude .git . "$1"
+          }
+
+          # Use fd to generate the list for directory completion
+          _fzf_compgen_dir() {
+            fd --type=d --hidden --exclude .git . "$1"
+          }
+
+          # Advanced customization of fzf options via _fzf_comprun function
+          # - The first argument to the function is the name of the command.
+          # - You should make sure to pass the rest of the arguments to fzf.
+          _fzf_comprun() {
+            local command=$1
+            shift
+
+            show_file_or_dir_preview="if [ -d {} ]; then eza --tree --color=always {} | head -200; else bat -n --color=always --line-range :500 {}; fi"
+
+            case "$command" in
+              cd)           fzf --preview 'eza --tree --color=always {} | head -200' "$@" ;;
+              export|unset) fzf --preview "eval 'echo ''${}'"         "$@" ;;
+              ssh)          fzf --preview 'dig {}'                   "$@" ;;
+              *)            fzf --preview "$show_file_or_dir_preview" "$@" ;;
+            esac
+          }
+
+          # Can add comments on commandline
+          setopt interactivecomments
+
+          # Move over words with alphanumeric characters as "words"
+          #  man zshall - ZLE FUNCTIONS
+          autoload -U select-word-style
+          select-word-style bash
+
+          # Key Bindings
+          bindkey "^[[H"    beginning-of-line  # home
+          bindkey "^[[F"    end-of-line        # end
+          bindkey "^[[1;3C" forward-word       # alt + right-arrow
+          bindkey "^[[1;3D" backward-word      # alt + left-arrow
+          bindkey "^[[3~"   delete-char        # delete character under cursor
+
+          # Key Bindings for tmux
+          bindkey "\E[1~"    beginning-of-line  # home
+          bindkey "\E[4~"    end-of-line        # end
+        '')
+      ];
+
 
     };
   };
