@@ -99,6 +99,23 @@ in {
       enable = true;
     };
 
+    delta = {
+      enable = true;
+      enableGitIntegration = true;
+      options = {
+        navigate = true;
+        side-by-side = true;
+        features = "decorations";
+        whitespace-error-style = "22 reverse";
+
+        decorations = {
+          commit-decoration-style = "bold yellow box ul";
+          file-decoration-style = "none";
+          file-style = "bold yellow ul";
+        };
+      };
+    };
+
     fd = {
       enable = true;
       extraOptions = [
@@ -147,9 +164,32 @@ in {
 
     git = {
       enable = true;
-      settings.user = {
-        name = "victor louie";
-        email = "victor@victorlouie.com";
+
+      ignores = [
+        ".DS_Store"
+        "*.swp"
+      ];
+
+      settings = {
+        user = {
+          name = "Victor Louie";
+          email = "victor@victorlouie.com";
+        };
+
+        alias = {
+          worktree-clone-bare = "!sh ~/.config/git/scripts/worktree-clone-bare.sh";
+          del = "branch -D";
+          s = "status";
+        };
+
+        core = {
+          editor = "vim";
+        };
+
+        commit.template = "~/.config/git/commit-template";
+        diff.colorMoved = "default";
+        merge.conflictstyle = "zdiff3";
+        pull.ff = "only";
       };
     };
 
@@ -171,8 +211,6 @@ in {
           highlight = "fg=#171438,bg=white,bold,underline";
           strategy = [ "history" "completion" ];
       };
-
-#      completionInit = "autoload -Uz compinit && compinit && zstyle ':completion:*' menu select";
 
       syntaxHighlighting = {
           enable = true;

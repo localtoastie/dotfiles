@@ -27,9 +27,18 @@
               home.backupFileExtension = "hm-backup";
               xdg = {
                 enable = true;
-                configFile."zsh/functions" = {
-                  source = ./zsh-functions;
-                  recursive = true;
+                configFile = {
+                  "zsh/functions" = {
+                    source = ./zsh-functions;
+                    recursive = true;
+                  };
+                  "git/commit-template" = {
+                    source = ./git/commit-template;
+                  };
+                  "git/scripts/worktree-clone-bare.sh" = {
+                    source = ./git/scripts/worktree-clone-bare.sh;
+                    executable = true;
+                  };
                 };
               };
             }
