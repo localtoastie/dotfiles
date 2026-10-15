@@ -7,9 +7,13 @@
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    nixGL = {
+      url = "github:nix-community/nixGL";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
-  outputs = { self, nixpkgs, home-manager, ...  }:
+  outputs = { self, nixpkgs, home-manager,  ...  } @ inputs:
     let
       mkHome = { system, username, extraModules ? [] }:
         home-manager.lib.homeManagerConfiguration {
@@ -17,6 +21,11 @@
             inherit system;
             config.allowUnfree = true;
           };
+
+          extraSpecialArgs = { 
+            inherit inputs;
+          };
+
           modules = [ ./home/common.nix ] ++ extraModules ++ [
             {
               home.username = username;

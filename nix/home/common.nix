@@ -1,4 +1,4 @@
-{ config, pkgs, lib, ... }:
+{ config, pkgs, lib, inputs, ... }:
 let
   shellAliases = {
     ".." = "cd ..";
@@ -23,12 +23,8 @@ in {
       _1password-cli
       awscli2
       bash-completion
-      bat
       eza
       fastfetch
-      fd
-      fzf
-      granted
       jq
       mise
       nerd-fonts.fira-code
@@ -37,7 +33,6 @@ in {
       podman-compose
       ripgrep
       ssm-session-manager-plugin
-      starship
       strace
       tldr
       tmux
@@ -45,13 +40,13 @@ in {
       uv
       vim
       wget
-      zoxide
       zsh-syntax-highlighting
       zsh-history-substring-search
       _1password-gui
       brave
       google-chrome
       obsidian
+      slack
     ];
 
     file = {
@@ -60,6 +55,11 @@ in {
 #      '';
 #      ".config/vim/vimrc".source = ../config/vim/vimrc;
     };
+  };
+
+  targets.genericLinux.nixGL = {
+    packages = inputs.nixGL.packages;
+    defaultWrapper = "mesa";
   };
 
   programs = {
@@ -120,8 +120,8 @@ in {
       enable = true;
       extraOptions = [
         #"--no-ignore"
-	"--strip-cwd-prefix"
-	"--absolute-path"
+        "--strip-cwd-prefix"
+        "--absolute-path"
       ];
       hidden = true;
       ignores = [
@@ -160,6 +160,13 @@ in {
           "--preview 'eza --tree --color=always {} | head -200'"
         ];
       };
+    };
+
+    ghostty = {
+      enable = true;
+      enableBashIntegration = true;
+      enableZshIntegration = true;
+      package = config.lib.nixGL.wrap pkgs.ghostty;
     };
 
     git = {
@@ -262,7 +269,7 @@ in {
         (lib.mkOrder 500 ''
           # Where to look for autoload function definitions
           fpath=(
-            ~/.config/zsh/functions
+            ${config.xdg.configHome}/zsh/functions
             "''${fpath[@]}"
           )
 
