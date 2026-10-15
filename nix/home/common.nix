@@ -5,6 +5,8 @@ let
     "..." = "cd ../..";
     cat = "bat";
     cd = "z";
+    ll = "ls -al";
+    ls = "eza --color=always --long --git --icons=always";
     vi = "vim";
   };
 in {
@@ -30,6 +32,7 @@ in {
       jq
       mise
       nerd-fonts.fira-code
+      nerd-fonts.jetbrains-mono
       podman
       podman-compose
       ripgrep
@@ -55,13 +58,7 @@ in {
 #      ".inputrc".text = ''
 #        set bell-style visible
 #      '';
-#      ".config/git/ignore".text = ''
-#        .DS_Store
-#      '';
-#      ".config/git/commit-template".source = ../config/git/commit-template;
-#      ".config/git/scripts".source = ../config/git/scripts;
 #      ".config/vim/vimrc".source = ../config/vim/vimrc;
-#      ".config/zsh/functions".source = ../config/zsh/functions;
     };
   };
 
@@ -73,6 +70,13 @@ in {
     awscli = {
       enable = true;
       settings = import ./aws/config.nix;
+    };
+
+    bash = {
+      enable = true;
+      enableCompletion = true;
+
+      inherit shellAliases;
     };
 
     bat = {
@@ -93,10 +97,6 @@ in {
           file = "themes/Catppuccin Mocha.tmTheme";
         };
       };
-    };
-
-    bash = {
-      enable = true;
     };
 
     delta = {
@@ -196,6 +196,12 @@ in {
     granted = {
       enable = true;
       enableZshIntegration = true;
+    };
+
+    starship = {
+      enable = true;
+      enableZshIntegration = true;
+      settings = import ../starship/starship.nix;
     };
 
     zoxide = {
