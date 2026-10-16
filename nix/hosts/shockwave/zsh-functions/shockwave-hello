@@ -1,0 +1,5 @@
+shockwave-hello() {
+    echo "hello from shockwave"
+}
+
+shockwave-hello "$@"

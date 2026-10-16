@@ -1,4 +1,4 @@
-{ config, pkgs, lib, inputs, ... }:
+{ config, pkgs, lib, ... }:
 let
   shellAliases = {
     ".." = "cd ..";
@@ -29,24 +29,14 @@ in {
       mise
       nerd-fonts.fira-code
       nerd-fonts.jetbrains-mono
-      podman
-      podman-compose
       ripgrep
       ssm-session-manager-plugin
-      strace
       tldr
       tmux
       tree
       uv
       vim
       wget
-      zsh-syntax-highlighting
-      zsh-history-substring-search
-      _1password-gui
-      brave
-      google-chrome
-      obsidian
-      slack
     ];
 
     file = {
@@ -57,19 +47,14 @@ in {
     };
   };
 
-  targets.genericLinux.nixGL = {
-    packages = inputs.nixGL.packages;
-    defaultWrapper = "mesa";
-  };
-
   programs = {
     home-manager = {
       enable = true;
     };
 
+    # Profiles are defined per host in hosts/<name>/aws.nix
     awscli = {
       enable = true;
-      settings = import ./aws/config.nix;
     };
 
     bash = {
@@ -160,13 +145,6 @@ in {
           "--preview 'eza --tree --color=always {} | head -200'"
         ];
       };
-    };
-
-    ghostty = {
-      enable = true;
-      enableBashIntegration = true;
-      enableZshIntegration = true;
-      package = config.lib.nixGL.wrap pkgs.ghostty;
     };
 
     git = {

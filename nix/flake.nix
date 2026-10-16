@@ -59,7 +59,13 @@
         "victor@thundercracker" = mkHome {
           system = "x86_64-linux";
           username = "victor";
-          extraModules = [ ./home/linux.nix ];
+          extraModules = [ ./home/linux.nix ./home/redhat.nix ./hosts/thundercracker ];
+        };
+
+        "victor@shockwave" = mkHome {
+          system = "x86_64-linux";
+          username = "victor";
+          extraModules = [ ./home/linux.nix ./home/redhat.nix ./hosts/shockwave ];
         };
 
 #        "victor@skywarp" = mkHome {
