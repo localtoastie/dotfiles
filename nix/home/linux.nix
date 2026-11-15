@@ -4,8 +4,6 @@
 {
   home.packages = with pkgs; [
     strace
-    _1password
-    _1password-gui
     brave
     google-chrome
     obsidian
@@ -73,10 +71,4 @@
     };
   };
 
-
-
-  programs._1password = {
-    enable = true;
-
-  };
 }
