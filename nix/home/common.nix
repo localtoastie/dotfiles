@@ -20,7 +20,7 @@ in {
     stateVersion = "26.05";
 
     packages = with pkgs; [
-      _1password-cli
+    #  _1password-cli
       awscli2
       bash-completion
       eza
@@ -52,7 +52,9 @@ in {
       enable = true;
     };
 
-    # Profiles are defined per host in hosts/<name>/aws.nix
+    # ~/.aws/config is not managed here: it is rendered from
+    # hosts/<name>/aws-config.tpl by `just aws-config` so account details
+    # stay in 1Password and out of the repo and /nix/store
     awscli = {
       enable = true;
     };

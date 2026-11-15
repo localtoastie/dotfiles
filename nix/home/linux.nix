@@ -4,6 +4,7 @@
 {
   home.packages = with pkgs; [
     strace
+    _1password
     _1password-gui
     brave
     google-chrome
@@ -58,5 +59,24 @@
         "ctrl+s>e=equalize_splits"
       ];
     };
+  };
+
+  # Use the 1Password desktop app's SSH agent so private keys stay in the
+  # vault. Which keys it offers is set per host in 1Password/ssh/agent.toml.
+  programs.ssh = {
+    enable = true;
+    enableDefaultConfig = false;
+    # Unmanaged, per-machine hosts (or anything too sensitive for the repo)
+    includes = [ "~/.ssh/config.local" ];
+    settings."*" = {
+      IdentityAgent = "~/.1password/agent.sock";
+    };
+  };
+
+
+
+  programs._1password = {
+    enable = true;
+
   };
 }

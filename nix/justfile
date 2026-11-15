@@ -6,6 +6,24 @@ username := `whoami`
 switch:
   home-manager switch --flake {{flake}}#{{username}}@{{host}}
 
+# Render ~/.aws/config from this host's template using 1Password
+aws-config:
+  #!/usr/bin/env bash
+  set -euo pipefail
+  tpl="hosts/{{host}}/aws-config.tpl"
+  if [ ! -f "$tpl" ]; then
+    echo "No AWS template for {{host}} (expected $tpl)" >&2; exit 1
+  fi
+  if ! op whoami >/dev/null 2>&1; then
+    echo 'Not signed in to 1Password. Run: eval $(op signin)' >&2; exit 1
+  fi
+  if [ -L ~/.aws/config ]; then
+    echo "~/.aws/config is still a home-manager symlink. Run 'just switch' first." >&2; exit 1
+  fi
+  mkdir -p ~/.aws
+  op inject --force -i "$tpl" -o ~/.aws/config
+  echo "Wrote ~/.aws/config"
+
 # Preview changes without applying (dry-run/build only)
 build:
   home-manager build --flake {{flake}}#{{username}}@{{host}}
